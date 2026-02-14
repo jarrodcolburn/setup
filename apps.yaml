@@ -1,0 +1,96 @@
+# apps.yaml
+# Agent Instruction: Read this file to determine what software to install.
+
+groups:
+  core_utils:
+    description: "Essential system tools and package managers"
+    items:
+      - name: deb-get
+        verify_cmd: "which deb-get"
+        version_cmd: "deb-get version"
+        install_ref: "https://github.com/wimpysworld/deb-get"
+        method: "script"
+        notes: "Install this first; it helps install other .deb files."
+      - name: curl
+        verify_cmd: "which curl"
+        version_cmd: "curl --version"
+        method: "apt"
+      - name: git
+        verify_cmd: "which git"
+        version_cmd: "git --version"
+        method: "apt"
+      - name: rustup
+        verify_cmd: "which cargo"
+        version_cmd: "cargo --version"
+        install_ref: "https://rustup.rs/"
+        method: "script"
+        notes: "Installs rustc, cargo, and rustup. The script should add cargo to the PATH."
+
+  dev_cli:
+    description: "Terminal tools and developer utilities"
+    items:
+      - name: zellij
+        verify_cmd: "which zellij"
+        version_cmd: "zellij --version"
+        install_ref: "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz"
+        method: "manual_binary"
+        notes: "Manually download, extract, and move binary to /usr/local/bin."
+      - name: gh
+        verify_cmd: "which gh"
+        version_cmd: "gh --version"
+        install_ref: "https://cli.github.com/"
+        method: "deb-get"
+      - name: uv
+        verify_cmd: "which uv"
+        version_cmd: "uv --version"
+        install_ref: "https://docs.astral.sh/uv/"
+        method: "script"
+        notes: "The script should add uv to the PATH."
+      - name: glow
+        verify_cmd: "which glow"
+        version_cmd: "glow --version"
+        method: "apt_with_repo"
+        notes: |
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+          sudo apt update && sudo apt install glow -y
+
+  editors:
+    description: "Code editors and IDEs"
+    items:
+      - name: neovim
+        verify_cmd: "which nvim"
+        version_cmd: "nvim --version"
+        method: "apt"
+      - name: lazyvim
+        verify_cmd: "test -d ~/.config/nvim"
+        install_ref: "https://www.lazyvim.org/"
+        method: "git_clone"
+        depends_on: ["neovim"]
+        notes: "Clones the LazyVim starter config. Depends on neovim."
+      - name: code
+        verify_cmd: "which code"
+        version_cmd: "code --version"
+        install_ref: "https://code.visualstudio.com/docs/setup/linux"
+        method: "deb-get"
+      - name: antigravity
+        verify_cmd: "which antigravity"
+        version_cmd: "antigravity --version"
+        install_ref: "https://antigravity.google/download/linux"
+        method: "manual_download"
+
+  browsers:
+    description: "Web Browsers"
+    items:
+      - name: google-chrome-stable
+        verify_cmd: "which google-chrome"
+        version_cmd: "google-chrome-stable --version"
+        install_ref: "https://www.google.com/chrome/"
+        method: "deb-get"
+
+# History of successful workarounds (Agent: Append new findings here)
+install_notes:
+  - "2024-02-14: If deb-get fails for Chrome, fallback to direct .deb download from Google."
+  - "2026-02-13: `neovim` is not available via `deb-get`, fallback to `apt`."
+  - "2026-02-13: `zellij` script installer can be brittle; direct binary download is more reliable."
