@@ -46,6 +46,18 @@ groups:
         install_ref: "https://docs.astral.sh/uv/"
         method: "script"
         notes: "The script should add uv to the PATH."
+      - name: notebooklm-mcp-cli
+        verify_cmd: "which nlm"
+        version_cmd: "nlm --version"
+        install_ref: "https://github.com/jacob-bd/notebooklm-mcp-cli"
+        method: "uv"
+        notes: "Installs the NotebookLM MCP CLI and server."
+      - name: skills
+        verify_cmd: "which skills"
+        version_cmd: "skills --version"
+        install_ref: "https://github.com/vercel-labs/skills"
+        method: "npm"
+        notes: "The open agent skills tool."
       - name: glow
         verify_cmd: "which glow"
         version_cmd: "glow --version"
@@ -94,3 +106,5 @@ install_notes:
   - "2024-02-14: If deb-get fails for Chrome, fallback to direct .deb download from Google."
   - "2026-02-13: `neovim` is not available via `deb-get`, fallback to `apt`."
   - "2026-02-13: `zellij` script installer can be brittle; direct binary download is more reliable."
+  - "2026-02-14: Successfully installed `notebooklm-mcp-cli` using `uv tool install`."
+  - "2026-02-14: Successfully installed `skills` CLI using `npm install -g --quiet skills`."

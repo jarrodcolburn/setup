@@ -14,6 +14,13 @@ Load `apps.yaml`. Iterate through each **group** defined in the file.
 
 **Pre-flight Check:**
 - Proactively update the current shell's `PATH` to include common user-specific binary directories, such as `$HOME/.local/bin` and `$HOME/.cargo/bin`, to ensure installed tools are immediately found. This can be done with `export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"`.
+- **Recommended:** Run the **Update Strategy** commands below before proceeding with new installations to ensure the system and package managers are up-to-date.
+
+**Update Strategy (Periodic/Maintenance):**
+To keep the system and global tools updated with minimal output, run:
+- **System (Apt):** `sudo apt update -qq && sudo apt upgrade -y -qq`
+- **Python (UV):** `uv tool upgrade --all -q`
+- **Node (NPM):** `npm update -g --silent`
 
 **For each Group:**
 1.  **Announce:** "Ready to setup [Group Name]: [Description]".
@@ -31,11 +38,11 @@ Load `apps.yaml`. Iterate through each **group** defined in the file.
 
 3.  **Installation Strategy (Priority Order):**
     * **Rule #0:** **NO SNAP. NO FLATPAK.** (Unless explicitly authorized by user).
-    * **Rule #1 (System):** Use `apt` for standard libraries and applications available in the default repositories.
+    * **Rule #1 (System):** Use `apt` with quiet flags (e.g., `sudo apt install -qq [package] -y`) for standard libraries and applications available in the default repositories.
     * **Rule #2 (.deb/3rd Party):** Use `deb-get` if available and the app is supported. If `deb-get` fails, attempt to install with `apt`.
-    * **Rule #3 (Python):** Use `uv tool install [package]`. Never use system pip.
-    * **Rule #4 (Rust):** Use `rustup` for toolchains and `cargo` to install binaries.
-    * **Rule #5 (Node):** Use `npm install -g [package]`.
+    * **Rule #3 (Python):** Use `uv tool install -q [package]`. Never use system pip.
+    * **Rule #4 (Rust):** Use `rustup` for toolchains and `cargo install -q [package]` to install binaries.
+    * **Rule #5 (Node):** Use `npm install -g --quiet [package]`.
     * **Rule #6 (Script):** If a `script` method is specified, do not pipe it directly to a shell.
         1. Download the script using `curl` or `wget`.
         2. Inspect the script's contents (e.g., with `head` or `read_file`) to understand its actions and identify any useful flags (e.g., `--quiet`, `--non-interactive`, `-y`).
