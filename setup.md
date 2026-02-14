@@ -74,3 +74,14 @@ The final report will be saved as `artifacts/installation_report.md`.
 | App | Status | Version | Notes |
 |-----|--------|---------|-------|
 | ... | ...    | ...     | ...   |
+
+## Phase 5: Configuration Deployment
+After software installation, offer to deploy configuration templates from the `configs/` directory.
+
+1. **Scan**: List available configurations in `configs/`.
+2. **Ask**: "Would you like to deploy configuration templates for these applications?"
+3. **Action**:
+   * For each selected app:
+     1. Locate the target path in the home directory (e.g., `configs/zsh/p10k.zsh` -> `~/.p10k.zsh`).
+     2. If the target file exists, ask the user if they want to **Backup & Overwrite**, **Skip**, or **Diff**.
+     3. Perform the action and log it in `artifacts/config_deployment.log`.
