@@ -83,6 +83,8 @@ After software installation, offer to deploy configuration templates from the `c
 3. **Action**:
    * For each selected app:
      1. Locate the target path in the home directory.
+        - `configs/zsh/zshrc` -> `~/.zshrc`
+        - `configs/zsh/zsh_plugins.txt` -> `~/.zsh_plugins.txt`
         - `configs/zsh/p10k.zsh` -> `~/.p10k.zsh`
         - `configs/gemini/settings.json` -> `~/.gemini/settings.json`
      2. If the target file exists, ask the user if they want to **Backup & Overwrite**, **Skip**, or **Diff**.

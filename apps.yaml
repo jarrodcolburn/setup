@@ -152,3 +152,4 @@ install_notes:
   - "2026-02-14: Successfully installed `skills` CLI using `npm install -g --quiet skills`."
   - "2026-02-14: Successfully installed `add-mcp` CLI using `npm install -g --quiet add-mcp`."
   - "2026-02-14: Successfully installed `zsh` via `apt` and `antidote` via `git clone`, with setup in `.zshrc` and `.zsh_plugins.txt`."
+  - "2026-02-14: Fixed Zsh initialization errors by adding `autoload -Uz compinit && compinit` before `antidote load` in `.zshrc`. This ensures `compdef` is available for plugins."
