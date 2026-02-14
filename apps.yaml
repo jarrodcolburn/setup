@@ -89,7 +89,7 @@ groups:
         notes: "On Debian, the binary is 'fdfind'. LazyVim prefers 'fd'."
       - name: antidote
         verify_cmd: "test -d ~/.antidote"
-        version_cmd: "zsh -c 'source ~/.antidote/antidote.zsh && antidote --version'"
+        version_cmd: "zsh -i -c 'antidote --version' 2>/dev/null"
         install_ref: "https://github.com/mattmc3/antidote"
         method: "git_clone"
         notes: "Clones antidote to ~/.antidote and requires setup in .zshrc."
