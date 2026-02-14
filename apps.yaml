@@ -87,6 +87,10 @@ groups:
         version_cmd: "fdfind --version"
         method: "apt"
         notes: "On Debian, the binary is 'fdfind'. LazyVim prefers 'fd'."
+      - name: fzf
+        verify_cmd: "which fzf"
+        version_cmd: "fzf --version"
+        method: "apt"
       - name: antidote
         verify_cmd: "test -d ~/.antidote"
         version_cmd: "zsh -i -c 'antidote --version' 2>/dev/null"
