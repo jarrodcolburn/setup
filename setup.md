@@ -82,6 +82,8 @@ After software installation, offer to deploy configuration templates from the `c
 2. **Ask**: "Would you like to deploy configuration templates for these applications?"
 3. **Action**:
    * For each selected app:
-     1. Locate the target path in the home directory (e.g., `configs/zsh/p10k.zsh` -> `~/.p10k.zsh`).
+     1. Locate the target path in the home directory.
+        - `configs/zsh/p10k.zsh` -> `~/.p10k.zsh`
+        - `configs/gemini/settings.json` -> `~/.gemini/settings.json`
      2. If the target file exists, ask the user if they want to **Backup & Overwrite**, **Skip**, or **Diff**.
      3. Perform the action and log it in `artifacts/config_deployment.log`.

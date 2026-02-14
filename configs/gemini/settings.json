@@ -1,0 +1,19 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    },
+    "enablePermanentToolApproval": true
+  },
+  "general": {
+    "previewFeatures": true,
+    "vimMode": true
+  },
+  "experimental": {
+    "useOSC52Paste": true,
+    "plan": true
+  },
+  "ide": {
+    "enabled": true
+  }
+}
