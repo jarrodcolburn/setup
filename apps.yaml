@@ -20,6 +20,10 @@ groups:
         version_cmd: "git --version"
         method: "apt"
         notes: "On Debian Bookworm, this provides 2.39.x. For newer versions on Ubuntu-based systems, use ppa:git-core/ppa."
+      - name: zsh
+        verify_cmd: "which zsh"
+        version_cmd: "zsh --version"
+        method: "apt"
       - name: rustup
         verify_cmd: "which cargo"
         version_cmd: "cargo --version"
@@ -83,6 +87,12 @@ groups:
         version_cmd: "fdfind --version"
         method: "apt"
         notes: "On Debian, the binary is 'fdfind'. LazyVim prefers 'fd'."
+      - name: antidote
+        verify_cmd: "test -d ~/.antidote"
+        version_cmd: "zsh -c 'source ~/.antidote/antidote.zsh && antidote --version'"
+        install_ref: "https://github.com/mattmc3/antidote"
+        method: "git_clone"
+        notes: "Clones antidote to ~/.antidote and requires setup in .zshrc."
 
   editors:
     description: "Code editors and IDEs"
@@ -137,3 +147,4 @@ install_notes:
   - "2026-02-14: Successfully installed `notebooklm-mcp-cli` using `uv tool install`."
   - "2026-02-14: Successfully installed `skills` CLI using `npm install -g --quiet skills`."
   - "2026-02-14: Successfully installed `add-mcp` CLI using `npm install -g --quiet add-mcp`."
+  - "2026-02-14: Successfully installed `zsh` via `apt` and `antidote` via `git clone`, with setup in `.zshrc` and `.zsh_plugins.txt`."

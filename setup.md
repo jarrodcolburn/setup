@@ -18,7 +18,7 @@ Load `apps.yaml`. Iterate through each **group** defined in the file.
 
 **Update Strategy (Periodic/Maintenance):**
 To keep the system and global tools updated with minimal output, run:
-- **System (Apt):** `sudo apt update -qq && sudo apt upgrade -y -qq`
+- **System (Apt):** `sudo DEBIAN_FRONTEND=noninteractive apt update -qq && sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y -qq >> artifacts/apt.log 2>&1`
 - **Python (UV):** `uv tool upgrade --all -q`
 - **Node (NPM):** `npm update -g --silent`
 
@@ -38,7 +38,8 @@ To keep the system and global tools updated with minimal output, run:
 
 3.  **Installation Strategy (Priority Order):**
     * **Rule #0:** **NO SNAP. NO FLATPAK.** (Unless explicitly authorized by user).
-    * **Rule #1 (System):** Use `apt` with quiet flags (e.g., `sudo apt install -qq [package] -y`) for standard libraries and applications available in the default repositories.
+    * **Rule #1 (System):** Use `apt` with quiet flags and redirect output to `artifacts/apt.log` for debugging.
+      `sudo DEBIAN_FRONTEND=noninteractive apt install -y -qq [package] >> artifacts/apt.log 2>&1`
     * **Rule #2 (.deb/3rd Party):** Use `deb-get` if available and the app is supported. If `deb-get` fails, attempt to install with `apt`.
     * **Rule #3 (Python):** Use `uv tool install -q [package]`. Never use system pip.
     * **Rule #4 (Rust):** Use `rustup` for toolchains and `cargo install -q [package]` to install binaries.
@@ -56,6 +57,9 @@ To keep the system and global tools updated with minimal output, run:
         2. Make the file executable with `chmod +x`.
         3. Move the file to `/usr/local/bin/` and name it as the primary command (e.g., `/usr/local/bin/nvim`).
         4. If the AppImage requires FUSE (common on Debian), inform the user or ensure `libfuse2` is available.
+    * **Rule #11 (Git Clone):** If a `git_clone` method is specified:
+        1. Clone the repository from `install_ref` to the path specified in the `verify_cmd` or `notes`.
+        2. Perform any necessary setup steps described in the `notes` (e.g., adding to shell profile).
 
 ## Phase 3: Error Handling & Self-Correction
 - **If an install fails:** 1. Analyze the error. 
