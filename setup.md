@@ -51,6 +51,11 @@ To keep the system and global tools updated with minimal output, run:
     * **Rule #7 (Manual Binary):** If a `manual_binary` method is specified, download the binary from `install_ref`, extract it if necessary, and move the executable to `/usr/local/bin`.
     * **Rule #8 (Manual):** If a URL is provided in `install_ref`, read the site (using your browser tool) or curl the page to find the `.deb` or install script.
     * **Rule #9 (Apt with Repo):** If an `apt_with_repo` method is specified, execute the commands in the `notes` field to add the repository, then run `apt update` and `apt install`.
+    * **Rule #10 (AppImage):** When installing an AppImage manually:
+        1. Download the latest version from the official repository (usually GitHub) using `curl -L`.
+        2. Make the file executable with `chmod +x`.
+        3. Move the file to `/usr/local/bin/` and name it as the primary command (e.g., `/usr/local/bin/nvim`).
+        4. If the AppImage requires FUSE (common on Debian), inform the user or ensure `libfuse2` is available.
 
 ## Phase 3: Error Handling & Self-Correction
 - **If an install fails:** 1. Analyze the error. 

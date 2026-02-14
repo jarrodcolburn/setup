@@ -19,6 +19,7 @@ groups:
         verify_cmd: "which git"
         version_cmd: "git --version"
         method: "apt"
+        notes: "On Debian Bookworm, this provides 2.39.x. For newer versions on Ubuntu-based systems, use ppa:git-core/ppa."
       - name: rustup
         verify_cmd: "which cargo"
         version_cmd: "cargo --version"
@@ -73,14 +74,35 @@ groups:
           curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
           echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
           sudo apt update && sudo apt install glow -y
+      - name: ripgrep
+        verify_cmd: "which rg"
+        version_cmd: "rg --version"
+        method: "apt"
+      - name: fd-find
+        verify_cmd: "which fdfind"
+        version_cmd: "fdfind --version"
+        method: "apt"
+        notes: "On Debian, the binary is 'fdfind'. LazyVim prefers 'fd'."
 
   editors:
     description: "Code editors and IDEs"
     items:
       - name: neovim
-        verify_cmd: "which nvim"
+        verify_cmd: "bash -c 'v=$(nvim --version 2>/dev/null | head -n1 | cut -d\" \" -f2 | sed \"s/v//\"); [ -n \"$v\" ] && dpkg --compare-versions \"$v\" ge \"0.9.0\"'"
         version_cmd: "nvim --version"
-        method: "apt"
+        install_ref: "https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
+        method: "script"
+        notes: |
+          # This script ensures neovim is >= 0.9.0 for LazyVim.
+          # 1. Try apt first (handles Trixie upgrade case).
+          # 2. If version is still < 0.9.0, install official AppImage to /usr/local/bin.
+          sudo apt update -qq && sudo apt install -qq neovim -y
+          v=$(nvim --version 2>/dev/null | head -n1 | cut -d" " -f2 | sed "s/v//")
+          if [ -z "$v" ] || dpkg --compare-versions "$v" lt "0.9.0"; then
+            curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+            chmod +x nvim.appimage
+            sudo mv nvim.appimage /usr/local/bin/nvim
+          fi
       - name: lazyvim
         verify_cmd: "test -d ~/.config/nvim"
         install_ref: "https://www.lazyvim.org/"
