@@ -8,6 +8,8 @@ Before installing anything, run the following to understand the environment:
 1. `cat /etc/os-release` (Identify Distro/Version)
 2. `uname -a` (Identify Architecture: x86_64 vs aarch64)
 3. `id` (Check sudo privileges)
+4. `mkdir -p artifacts` (Ensure log directory exists)
+5. `sudo apt update -qq && sudo apt install -y -qq curl wget lsb-release gpg` (Install common dependencies)
 
 ## Phase 2: Interactive Installation Loop
 Load `apps.yaml`. Iterate through each **group** defined in the file.
@@ -32,28 +34,31 @@ To keep the system and global tools updated with minimal output, run:
 
 **For each Item:**
 1.  **Dependency Check:** Before installation, check for a `depends_on` field in `apps.yaml`. If present, ensure all listed applications are already installed. If not, install the dependencies first.
-2.  **Check Existence:** Run the `verify_cmd` (e.g., `which curl`). A more reliable check for commands that might not be in the default PATH is `exec bash -ic 'which <command>'`.
+2.  **Check Existence:** Run the `verify_cmd`. **This is the most reliable method:** `exec bash -ic 'which <command>'`. This ensures that user-specific paths are checked.
     * *If command returns 0/Success:* Output "✅ [App] already installed." and **SKIP** installation.
     * *If command fails:* Proceed to install.
 
 3.  **Installation Strategy (Priority Order):**
+    * **Note on PATH:** If an installation script modifies the `PATH` (e.g., `rustup`, `uv`), it may not be available in the current session. If a command fails with "not found" after installation, use its full path, which can be found with `exec bash -ic 'which <command>'`.
     * **Rule #0:** **NO SNAP. NO FLATPAK.** (Unless explicitly authorized by user).
     * **Rule #1 (System):** Use `apt` with quiet flags and redirect output to `artifacts/apt.log` for debugging.
       `sudo DEBIAN_FRONTEND=noninteractive apt install -y -qq [package] >> artifacts/apt.log 2>&1`
-    * **Rule #2 (.deb/3rd Party):** Use `deb-get` if available and the app is supported. If `deb-get` fails, attempt to install with `apt`.
+    * **Rule #2 (.deb/3rd Party):** Use `deb-get` if available and the app is supported. Use the `--quiet` flag. If `deb-get` fails, attempt to install with `apt`.
+      `sudo deb-get install --quiet [package]`
+      **Note:** Be aware that some `deb-get` packages may still prompt for interactive input (e.g., EULA agreement).
     * **Rule #3 (Python):** Use `uv tool install -q [package]`. Never use system pip.
     * **Rule #4 (Rust):** Use `rustup` for toolchains and `cargo install -q [package]` to install binaries.
     * **Rule #5 (Node):** Use `npm install -g --quiet [package]`.
     * **Rule #6 (Script):** If a `script` method is specified, do not pipe it directly to a shell.
-        1. Download the script using `curl` or `wget`.
+        1. Download the script using `curl` or `wget` to `/tmp`.
         2. Inspect the script's contents (e.g., with `head` or `read_file`) to understand its actions and identify any useful flags (e.g., `--quiet`, `--non-interactive`, `-y`).
         3. Execute the script with the identified flags.
         4. After execution, verify that the application's binary is available in the `PATH`. If not, and the script did not provide instructions, add it to the appropriate shell profile file (e.g. `~/.bashrc`).
-    * **Rule #7 (Manual Binary):** If a `manual_binary` method is specified, download the binary from `install_ref`, extract it if necessary, and move the executable to `/usr/local/bin`.
+    * **Rule #7 (Manual Binary):** If a `manual_binary` method is specified, download the binary from `install_ref` to `/tmp`, extract it if necessary, and move the executable to `/usr/local/bin`.
     * **Rule #8 (Manual):** If a URL is provided in `install_ref`, read the site (using your browser tool) or curl the page to find the `.deb` or install script.
     * **Rule #9 (Apt with Repo):** If an `apt_with_repo` method is specified, execute the commands in the `notes` field to add the repository, then run `apt update` and `apt install`.
     * **Rule #10 (AppImage):** When installing an AppImage manually:
-        1. Download the latest version from the official repository (usually GitHub) using `curl -L`.
+        1. Download the latest version from the official repository (usually GitHub) using `curl -L` to `/tmp`.
         2. Make the file executable with `chmod +x`.
         3. Move the file to `/usr/local/bin/` and name it as the primary command (e.g., `/usr/local/bin/nvim`).
         4. If the AppImage requires FUSE (common on Debian), inform the user or ensure `libfuse2` is available.

@@ -30,6 +30,14 @@ groups:
         install_ref: "https://rustup.rs/"
         method: "script"
         notes: "Installs rustc, cargo, and rustup. The script should add cargo to the PATH."
+      - name: wget
+        verify_cmd: "which wget"
+        version_cmd: "wget --version"
+        method: "apt"
+      - name: lsb-release
+        verify_cmd: "which lsb_release"
+        version_cmd: "lsb_release -a"
+        method: "apt"
 
   dev_cli:
     description: "Terminal tools and developer utilities"
@@ -45,6 +53,7 @@ groups:
         version_cmd: "gh --version"
         install_ref: "https://cli.github.com/"
         method: "deb-get"
+        notes: "Use `deb-get install --quiet gh`. Be aware of potential interactive prompts."
       - name: uv
         verify_cmd: "which uv"
         version_cmd: "uv --version"
@@ -93,7 +102,7 @@ groups:
         method: "apt"
       - name: antidote
         verify_cmd: "test -d ~/.antidote"
-        version_cmd: "zsh -i -c 'antidote --version' 2>/dev/null"
+        version_cmd: "git -C ~/.antidote rev-parse --short HEAD"
         install_ref: "https://github.com/mattmc3/antidote"
         method: "git_clone"
         notes: "Clones antidote to ~/.antidote and requires setup in .zshrc."
@@ -104,16 +113,16 @@ groups:
       - name: neovim
         verify_cmd: "bash -c 'v=$(nvim --version 2>/dev/null | head -n1 | cut -d\" \" -f2 | sed \"s/v//\"); [ -n \"$v\" ] && dpkg --compare-versions \"$v\" ge \"0.9.0\"'"
         version_cmd: "nvim --version"
-        install_ref: "https://github.com/neovim/neovim/releases/latest/download/nvim.appimage"
+        install_ref: "https://github.com/neovim/neovim/releases"
         method: "script"
         notes: |
           # This script ensures neovim is >= 0.9.0 for LazyVim.
-          # 1. Try apt first (handles Trixie upgrade case).
-          # 2. If version is still < 0.9.0, install official AppImage to /usr/local/bin.
+          # 1. Try apt first. If version is < 0.9.0, install official AppImage.
           sudo apt update -qq && sudo apt install -qq neovim -y
           v=$(nvim --version 2>/dev/null | head -n1 | cut -d" " -f2 | sed "s/v//")
           if [ -z "$v" ] || dpkg --compare-versions "$v" lt "0.9.0"; then
-            curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+            LATEST_URL=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | grep "browser_download_url.*nvim.appimage"\" | cut -d : -f 2,3 | tr -d '\"' | head -n1)
+            curl -LO $LATEST_URL
             chmod +x nvim.appimage
             sudo mv nvim.appimage /usr/local/bin/nvim
           fi
@@ -128,6 +137,7 @@ groups:
         version_cmd: "code --version"
         install_ref: "https://code.visualstudio.com/docs/setup/linux"
         method: "deb-get"
+        notes: "Use `deb-get install --quiet code`. Be aware of potential interactive prompts."
       - name: antigravity
         verify_cmd: "which antigravity"
         version_cmd: "antigravity --version"
@@ -142,6 +152,7 @@ groups:
         version_cmd: "google-chrome-stable --version"
         install_ref: "https://www.google.com/chrome/"
         method: "deb-get"
+        notes: "Use `deb-get install --quiet google-chrome-stable`. Be aware of potential EULA prompts."
 
 # History of successful workarounds (Agent: Append new findings here)
 install_notes:
