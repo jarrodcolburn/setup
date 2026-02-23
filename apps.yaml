@@ -100,6 +100,11 @@ groups:
         verify_cmd: "which fzf"
         version_cmd: "fzf --version"
         method: "apt"
+      - name: direnv
+        verify_cmd: "which direnv"
+        version_cmd: "direnv --version"
+        method: "apt"
+        notes: "Requires `eval \"$(direnv hook zsh)\"` in .zshrc."
       - name: antidote
         verify_cmd: "test -d ~/.antidote"
         version_cmd: "git -C ~/.antidote rev-parse --short HEAD"
